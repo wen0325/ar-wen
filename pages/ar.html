@@ -231,18 +231,14 @@
     arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
     renderer="logarithmicDepthBuffer: true;"
   >
-    <!-- 宠物狗模型 -->
-  <a-entity 
-  id="dog" 
-  position="0 0.1 -0.5" 
-  scale="0.05 0.05 0.05" <!-- 放大 -->
-  look-at="[camera]"      <!-- 始终面向摄像头 -->
->
-  <a-entity 
-    gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
-    animation-mixer="clip: Idle; loop: repeat"
-  ></a-entity>
-</a-entity>
+    <!-- 宠物鸭模型，scale放大，rotation调整朝向摄像头 -->
+    <a-entity id="dog" position="0 0.1 -0.5" scale="0.15 0.15 0.15" rotation="0 0 0">
+      <!-- 鸭子模型（面朝摄像头，scale放大） -->
+      <a-entity 
+        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
+        animation-mixer="clip: Idle; loop: repeat"
+      ></a-entity>
+    </a-entity>
     
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
@@ -303,7 +299,7 @@
       sitBtn.addEventListener('click', () => {
         dog.setAttribute('animation', {
           property: 'rotation',
-          to: {x: 0, y: 180, z: 0},
+          to: {x: 0, y: 0, z: 0},
           dur: 300,
           easing: 'easeInOutQuad'
         });
