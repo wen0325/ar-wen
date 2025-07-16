@@ -2,86 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>SunglassesKhronos AR Viewer</title>
+  <title>sun</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <meta name="description" content="Sunglasses with Khronos logos and iridescent lenses - AR Viewer">
-  <link rel="icon" href="https://licensebuttons.net/l/by/3.0/88x31.png">
   <style>
-    body { margin: 0; padding: 0; font-family: system-ui, sans-serif; background: #222; color: #fff; }
-    #meta {
-      position: fixed;
-      top: 0; left: 0; width: 100vw;
-      background: rgba(30,30,30,0.92);
-      z-index: 10;
-      padding: 10px;
-      box-sizing: border-box;
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #181818;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .viewer-container {
+      position: relative;
+      width: 100vw;
+      height: 60vh;
+      background: #222;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: center;
     }
-    #meta img { border-radius: 6px; width: 56px; height: 56px; object-fit: cover; }
-    #meta .info { flex: 1; min-width: 0; }
-    #meta h1 { font-size: 1.1em; margin: 0 0 2px 0; }
-    #meta p { font-size: 0.95em; margin: 0 0 2px 0; color: #bbb;}
-    #meta .tags { font-size: 0.85em; color: #7fffd4; margin: 2px 0 0 0;}
-    #meta .legal { font-size: 0.7em; color: #aaa; margin-top: 2px;}
-    #closeMeta {
-      background: #444; color: #fff; border: none; border-radius: 50%;
-      width: 32px; height: 32px; font-size: 1.4em; cursor: pointer; margin-left: 6px;
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 1.5em 0 1em 0;
+    }
+    button {
+      background: #ff9800;
+      border: none;
+      color: #fff;
+      padding: 0.8em 1.4em;
+      border-radius: 24px;
+      font-size: 1.1em;
+      font-weight: 600;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+    button:active, button.selected {
+      background: #e65100;
+    }
+    .info {
+      padding: 1em;
+      text-align: center;
+      background: #232323;
+      border-radius: 1em;
+      margin: 0.5em 1em;
+      font-size: 1em;
+    }
+    .licenses {
+      margin: 1.5em 0 0.3em 0;
+      font-size: 0.95em;
+      color: #bbb;
+      text-align: center;
+    }
+    .licenses img {
+      vertical-align: middle;
+      margin-right: 0.3em;
+    }
+    .screenshot {
+      width: 90vw;
+      max-width: 380px;
+      display: block;
+      margin: 1.5em auto 0.7em auto;
+      border-radius: 0.8em;
+      box-shadow: 0 2px 12px #0005;
     }
     @media (max-width: 600px) {
-      #meta { flex-direction: column; align-items: flex-start; }
-      #meta img { width: 44px; height: 44px; }
+      .viewer-container { height: 44vh; }
     }
   </style>
-  <!-- A-Frame and AR.js -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@4.1.3/aframe/build/aframe-ar.js"></script>
+  <!-- model-viewer for AR and animation support -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
-  <div id="meta">
-    <img src="screenshot/screenshot.jpg" alt="SunglassesKhronos">
-    <div class="info">
-      <h1>SunglassesKhronos</h1>
-      <p>Sunglasses with Khronos logos and iridescent lenses</p>
-      <div class="tags">#showcase #extension</div>
-      <div class="legal">
-        <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC BY 4.0" style="height:18px;vertical-align:middle;">
-        CC-BY 4.0 - Eric Chadwick 2024<br>
-        <span>Khronos/3D Commerce logos &copy; Khronos Group</span>
-      </div>
-    </div>
-    <button id="closeMeta" title="Hide info">&times;</button>
+  <h2 style="text-align:center;margin:1em 0 0.3em 0;font-weight: 700;">Fox AR Viewer</h2>
+
+  <div class="viewer-container">
+    <model-viewer
+      id="foxViewer"
+      src="./SunglassesKhronos.glb"
+      ar
+      ar-modes="scene-viewer webxr quick-look"
+      camera-controls
+      auto-rotate
+      shadow-intensity="1"
+      environment-image="neutral"
+      alt="A 3D model of a fox"
+      exposure="1"
+      style="width:100vw; height:100%; background: #222;"
+      animation-name="Survey"
+      autoplay
+    >
+      <button slot="ar-button" style="
+        position: absolute;
+        left: 50%; 
+        bottom: 10px;
+        transform: translateX(-50%);
+        background: #0a0;
+        color: #fff;
+        font-size: 1.08em;
+        border-radius: 20px;
+        padding: 0.5em 1.5em;
+        border: none;
+        box-shadow: 0 2px 6px #0004;
+        font-weight: 600;
+        cursor: pointer;
+      ">在AR中查看</button>
+    </model-viewer>
   </div>
 
-  <a-scene
-    vr-mode-ui="enabled: false"
-    embedded
-    arjs="sourceType: webcam; debugUIEnabled: false;"
-    renderer="antialias: true; logarithmicDepthBuffer: true;"
-    device-orientation-permission-ui="enabled: true"
-    style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0;"
-  >
-    <a-assets>
-      <a-asset-item id="glassesModel" src="./SunglassesKhronos.glb"></a-asset-item>
-    </a-assets>
-    <!-- Use "hiro" marker or replace with your custom marker -->
-    <a-marker preset="hiro">
-      <a-entity
-        gltf-model="#glassesModel"
-        scale="0.5 0.5 0.5"
-        position="0 0 0"
-        rotation="0 0 0"
-      ></a-entity>
-    </a-marker>
-    <a-entity camera></a-entity>
-  </a-scene>
-  
+  <div class="controls">
+    <button data-anim="Survey" class="selected">Survey</button>
+    <button data-anim="Walk">Walk</button>
+    <button data-anim="Run">Run</button>
+  </div>
+
+  <img class="screenshot" src="./screenshot.jpg" alt="Fox model screenshot">
+
+  <div class="info">
+    <div><b>名称：</b>Fox</div>
+    <div>简介：多个动画循环：Survey, Walk, Run。</div>
+    <div style="margin-top:0.7em;font-size:0.97em;opacity:0.8;">
+      支持AR体验，点击下方按钮切换动画。
+    </div>
+  </div>
+
+
+
   <script>
-    // Hide meta info on click for better AR experience
-    document.getElementById('closeMeta').onclick = function() {
-      document.getElementById('meta').style.display = 'none';
-    };
+    // Animation control logic
+    const viewer = document.getElementById('foxViewer');
+    const buttons = document.querySelectorAll('.controls button');
+    let currentAnim = 'Survey';
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const anim = btn.dataset.anim;
+        if (anim !== currentAnim) {
+          viewer.animationName = anim;
+          viewer.play();
+          currentAnim = anim;
+          buttons.forEach(b=>b.classList.toggle('selected', b===btn));
+        }
+      });
+    });
   </script>
 </body>
 </html>
