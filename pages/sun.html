@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>SunglassesKhronos AR Demo</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@4.1.3/aframe/build/aframe-ar.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      #meta { position: fixed; top: 10px; left: 10px; background:rgba(255,255,255,0.9); padding:12px; border-radius:8px; z-index:10; max-width:360px; }
+      #meta img { max-width: 100%; }
+      #meta small { color: #888; }
+    </style>
+  </head>
+  <body>
+    <div id="meta">
+      <h2>SunglassesKhronos</h2>
+      <img src="screenshot/screenshot.jpg" alt="SunglassesKhronos screenshot" />
+      <p>Sunglasses with Khronos logos and iridescent lenses</p>
+      <ul>
+        <li><b>Artist:</b> Eric Chadwick</li>
+        <li><b>Year:</b> 2024</li>
+        <li><b>Owner:</b> Darmstadt Graphics Group GmbH</li>
+        <li>
+          <b>License:</b>
+          <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">
+            CC-BY 4.0
+            <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC-BY 4.0" style="vertical-align:middle; height:20px;">
+          </a>
+        </li>
+        <li><b>What:</b> Model and textures and all images in the README.md</li>
+        <li><b>SPDX:</b> CC-BY-4.0</li>
+        <li><b>Tags:</b> showcase, extension</li>
+        <li><small>Khronos logo and 3D Commerce logo are trademarks of Khronos Group.</small></li>
+      </ul>
+    </div>
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+      renderer="logarithmicDepthBuffer: true;"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true"
+    >
+      <a-assets>
+        <a-asset-item id="glassesModel" src="./SunglassesKhronos.glb"></a-asset-item>
+      </a-assets>
+
+      <!-- Marker pattern (use Hiro marker or your own) -->
+      <a-marker preset="hiro">
+        <a-entity
+          gltf-model="#glassesModel"
+          scale="0.5 0.5 0.5"
+          rotation="0 0 0"
+          position="0 0 0"
+        ></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
