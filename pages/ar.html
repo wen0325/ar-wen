@@ -205,14 +205,14 @@
     arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
     renderer="logarithmicDepthBuffer: true;"
   >
-    <!-- rotation="0 270 0" 让鸭头正对摄像头，scale调为0.18适中 -->
-  <a-entity id="dog" position="0 0.1 -0.5" scale="0.18 0.18 0.18" rotation="0 90 0">
-  <a-entity 
-    id="duckModel"
-    gltf-model="./fox.gltf"
-    animation-mixer="clip: Idle; loop: repeat"
-  ></a-entity>
-</a-entity>
+    <!-- rotation="0 270 0" 让鸭头正对摄像头，scale调为0.08变小 -->
+    <a-entity id="dog" position="0 0.1 -0.5" scale="0.08 0.08 0.08" rotation="0 90 0">
+      <a-entity 
+        id="duckModel"
+        gltf-model="./fox.gltf"
+        animation-mixer="clip: Idle; loop: repeat"
+      ></a-entity>
+    </a-entity>
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
     <a-entity light="type: directional; color: #ffffff; intensity: 0.8; position: -1 1 1"></a-entity>
