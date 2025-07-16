@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no">
@@ -10,61 +10,215 @@
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
   
   <style>
-    body {
+    * {
       margin: 0;
-      overflow: hidden;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+    
+    body {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      color: #fff;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    header {
+      text-align: center;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+      background: linear-gradient(90deg, #ff6b6b, #ffa502);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      font-size: 1rem;
+      color: #a9a9a9;
+      margin-bottom: 10px;
+    }
+    
     #loading {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
+      background: rgba(10, 10, 25, 0.95);
       color: white;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      transition: opacity 0.5s ease;
+    }
+    
+    .loader {
+      width: 80px;
+      height: 80px;
+      border: 8px solid rgba(255, 255, 255, 0.1);
+      border-top: 8px solid #ff6b6b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 30px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .instructions {
+      max-width: 80%;
+      text-align: center;
+      line-height: 1.6;
+      color: #ccc;
+      margin-top: 20px;
+    }
+    
+    .error-message {
+      background: rgba(255, 0, 0, 0.2);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ff6b6b;
+      max-width: 80%;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .refresh-btn {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background: linear-gradient(90deg, #ff6b6b, #ffa502);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+    }
+    
+    .info-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      font-size: 0.9rem;
+      z-index: 5;
+    }
+    
+    .info-panel p {
+      margin: 5px 0;
+    }
+    
+    .highlight {
+      color: #ffa502;
+      font-weight: bold;
+    }
+    
+    a-scene {
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <div id="loading">等待摄像头权限...</div>
+  <header>
+    <h1>AR 红色方块示例</h1>
+    <div class="subtitle">将红色方块放置在真实环境中</div>
+  </header>
   
-  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
-    <!-- 摄像头实体 -->
-    <a-entity id="camera" camera look-at="[marker-hiro]"></a-entity>
-    
+  <div id="loading">
+    <div class="loader"></div>
+    <div class="loading-text">初始化AR环境...</div>
+    <div class="instructions">
+      请允许访问您的摄像头<br>
+      首次加载可能需要一些时间
+    </div>
+  </div>
+  
+  <a-scene 
+    vr-mode-ui="enabled: false"
+    arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
+    renderer="logarithmicDepthBuffer: true;"
+  >
     <!-- 红色方块在手机正前方 -->
     <a-box 
       id="dynamicBox"
-      position="0 0 0.1"  <!-- 正前方1米 -->
-      color="red" 
+      position="0 0.1 -0.5" 
+      material="color: red; metalness: 0.8; roughness: 0.2;"
       scale="0.2 0.2 0.2"
-      look-at="#camera"  <!-- 始终朝向摄像头 -->
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear;"
     ></a-box>
     
-
-    <!-- 场景结束 -->
-    <a-entity light="type: ambient; intensity: 0.5"></a-entity>
-    <a-entity light="type: directional; intensity: 0.8; position: 0 1 1"></a-entity>
+    <!-- 环境光 -->
+    <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 0.8; position: -1 1 1"></a-entity>
   </a-scene>
   
+  <div class="info-panel">
+    <p>移动设备扫描周围平面，寻找放置方块的位置</p>
+    <p>使用<span class="highlight">手势</span>可以旋转和缩放方块</p>
+  </div>
+  
   <script>
-    // 等待场景加载完成
     document.addEventListener('DOMContentLoaded', () => {
       const scene = document.querySelector('a-scene');
+      const loading = document.getElementById('loading');
       
-      // 检查场景是否成功加载
+      // 场景加载成功
       scene.addEventListener('loaded', () => {
-        document.getElementById('loading').style.display = 'none';
+        // 添加一些延迟让AR.js完全初始化
+        setTimeout(() => {
+          loading.style.opacity = '0';
+          setTimeout(() => {
+            loading.style.display = 'none';
+          }, 500);
+        }, 2000);
       });
       
       // 处理摄像头权限错误
       scene.addEventListener('error', (err) => {
-        document.getElementById('loading').innerHTML = 
-          '摄像头错误: ' + err + '<br>请允许摄像头访问并刷新页面。';
+        const errorMessage = err.detail ? err.detail.error || '未知错误' : '无法访问摄像头';
+        loading.innerHTML = `
+          <div class="error-message">
+            <h3>摄像头错误</h3>
+            <p>${errorMessage}</p>
+            <p>请允许摄像头访问并刷新页面</p>
+            <button class="refresh-btn" onclick="window.location.reload()">刷新页面</button>
+          </div>
+        `;
+      });
+      
+      // 处理移动设备上的返回按钮
+      window.addEventListener('popstate', () => {
+        window.location.reload();
       });
     });
   </script>
