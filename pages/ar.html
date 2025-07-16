@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
-  <title>AR 虚拟宠物鸭</title>
+  <title>AR 虚拟宠物鸭2</title>
   
   <!-- 引入 A-Frame 和 AR.js -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -206,13 +206,13 @@
     renderer="logarithmicDepthBuffer: true;"
   >
     <!-- rotation="0 270 0" 让鸭头正对摄像头，scale调为0.18适中 -->
-    <a-entity id="dog" position="0 0.1 -0.5" scale="0.18 0.18 0.18" rotation="0 270 0">
-      <a-entity 
-        id="duckModel"
-        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
-        animation-mixer="clip: Idle; loop: repeat"
-      ></a-entity>
-    </a-entity>
+  <a-entity id="dog" position="0 0.1 -0.5" scale="0.18 0.18 0.18" rotation="0 90 0">
+  <a-entity 
+    id="duckModel"
+    gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
+    animation-mixer="clip: Idle; loop: repeat"
+  ></a-entity>
+</a-entity>
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
     <a-entity light="type: directional; color: #ffffff; intensity: 0.8; position: -1 1 1"></a-entity>
