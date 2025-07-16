@@ -4,24 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     
-    <!-- 使用最新稳定版 -->
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
     
     <style>
         body { margin: 0; overflow: hidden; }
-        /* 添加加载提示 */
         #loading {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #000;
             color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: 9999;
         }
     </style>
@@ -30,22 +24,14 @@
 <body>
     <div id="loading">等待摄像头权限...</div>
     
-    <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
-
-        <!-- 确保路径正确 -->
-        <a-marker 
-            preset="hiro"  <!-- 先用默认标记测试 -->
-            <!-- 或自定义： -->
-            <!-- type="pattern" url="pattern-Skarredghost_marker.patt" -->
-        >
+    <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: true;'>
+        <a-marker preset="hiro">
             <a-box position="0 0.5 0" color="red"></a-box>
         </a-marker>
-
         <a-entity camera></a-entity>
     </a-scene>
 
     <script>
-        // 处理摄像头权限
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(() => {
                 document.getElementById('loading').style.display = 'none';
@@ -54,8 +40,6 @@
                 document.getElementById('loading').innerHTML = 
                     `摄像头错误: ${err.name}<br>请允许摄像头访问`;
             });
-
-        // 不再需要 resize hack（新版已修复）
     </script>
 </body>
 </html>
