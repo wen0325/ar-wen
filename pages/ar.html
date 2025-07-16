@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
-  <title>AR 狐狸3.11</title>
+  <title>AR 虚拟宠物狐狸</title>
   
   <!-- 引入 A-Frame 和 AR.js -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -161,7 +161,11 @@
       font-size: 30px;
       color: white;
     }
-    .dog-name {
+    .action-btn.active {
+      background: rgba(255, 154, 158, 0.5);
+      border-color: #ff9a9e;
+    }
+    .fox-name {
       position: absolute;
       top: 20px;
       left: 20px;
@@ -173,7 +177,7 @@
       display: flex;
       align-items: center;
     }
-    .dog-name::before {
+    .fox-name::before {
       content: "";
       display: inline-block;
       width: 10px;
@@ -181,6 +185,34 @@
       border-radius: 50%;
       background: #ff9a9e;
       margin-right: 8px;
+    }
+    .ar-tip {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px 25px;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 9;
+      font-size: 1.2rem;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    .status {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      z-index: 10;
     }
   </style>
   <!-- 加载Font Awesome图标 -->
@@ -191,7 +223,9 @@
     <h1>AR 虚拟宠物狐狸</h1>
     <div class="subtitle">将可爱的狐狸带入你的世界</div>
   </header>
-  <div class="dog-name">Buddy <i class="fas fa-paw" style="margin-left: 8px;"></i></div>
+  <div class="fox-name">小狐狸 <i class="fas fa-paw" style="margin-left: 8px;"></i></div>
+  <div class="status">状态: <span id="statusText">等待中</span></div>
+  
   <div id="loading">
     <div class="loader"></div>
     <div class="loading-text">正在准备AR环境...</div>
@@ -200,58 +234,74 @@
       首次加载可能需要一些时间
     </div>
   </div>
+  
+  <div class="ar-tip">移动设备扫描周围平面，放置狐狸</div>
+  
   <a-scene 
     vr-mode-ui="enabled: false"
     arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
     renderer="logarithmicDepthBuffer: true;"
   >
-    <!-- rotation="0 270 0" 让狐狸正对摄像头，scale调为0.04适当变小 -->
-    <a-entity id="dog" position="0 0 -0.5" scale="0.04 0.04 0.04" rotation="0 90 0">
+    <!-- 修改了狐狸的尺寸和位置 -->
+    <a-entity id="fox" position="0 -0.5 -1" scale="0.5 0.5 0.5" rotation="0 180 0">
       <a-entity 
         id="foxModel"
-        gltf-model="./Fox.glb"
-        animation-mixer="clip: Survey; loop: repeat"
+        gltf-model="https://cdn.jsdelivr.net/gh/aframevr/assets@master/360-image-gallery-boilerplate/img/ArcticFox.glb"
+        animation-mixer="clip: Walk; loop: repeat"
       ></a-entity>
     </a-entity>
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
     <a-entity light="type: directional; color: #ffffff; intensity: 0.8; position: -1 1 1"></a-entity>
+    <!-- AR.js 相机 -->
+    <a-entity camera></a-entity>
   </a-scene>
+  
   <div class="controls">
-    <div class="action-btn" id="surveyBtn" title="勘测">
-      <i class="fas fa-search"></i>
-    </div>
-    <div class="action-btn" id="walkBtn" title="行走">
+    <div class="action-btn active" id="walkBtn" title="行走">
       <i class="fas fa-shoe-prints"></i>
     </div>
     <div class="action-btn" id="runBtn" title="奔跑">
       <i class="fas fa-running"></i>
     </div>
+    <div class="action-btn" id="surveyBtn" title="勘测">
+      <i class="fas fa-search"></i>
+    </div>
   </div>
+  
   <div class="info-panel">
     <p>移动设备扫描周围平面，寻找放置狐狸的位置</p>
     <p>使用<span class="highlight">手势</span>可以旋转和缩放狐狸</p>
   </div>
+  
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const scene = document.querySelector('a-scene');
       const loading = document.getElementById('loading');
-      const dog = document.getElementById('dog');
+      const fox = document.getElementById('fox');
       const foxModel = document.getElementById('foxModel');
       const surveyBtn = document.getElementById('surveyBtn');
       const walkBtn = document.getElementById('walkBtn');
       const runBtn = document.getElementById('runBtn');
-
-      // 场景加载成功
-      scene.addEventListener('loaded', () => {
+      const statusText = document.getElementById('statusText');
+      const arTip = document.querySelector('.ar-tip');
+      
+      let modelLoaded = false;
+      let currentAnimation = 'Walk';
+      
+      // 模型加载完成事件
+      foxModel.addEventListener('model-loaded', () => {
+        console.log('狐狸模型加载完成!');
+        modelLoaded = true;
+        statusText.textContent = '模型加载完成';
+        
+        // 隐藏加载界面
+        loading.style.opacity = '0';
         setTimeout(() => {
-          loading.style.opacity = '0';
-          setTimeout(() => {
-            loading.style.display = 'none';
-          }, 500);
-        }, 2000);
+          loading.style.display = 'none';
+        }, 500);
       });
-
+      
       // 处理摄像头权限错误
       scene.addEventListener('error', (err) => {
         const errorMessage = err.detail ? err.detail.error || '未知错误' : '无法访问摄像头';
@@ -264,20 +314,76 @@
           </div>
         `;
       });
-
-      // 勘测按钮事件
+      
+      // 场景加载成功
+      scene.addEventListener('loaded', () => {
+        statusText.textContent = '场景加载完成';
+        setTimeout(() => {
+          arTip.style.display = 'none';
+        }, 5000);
+      });
+      
+      // 动画切换函数
+      function changeAnimation(animation) {
+        if (!modelLoaded) {
+          console.log('模型尚未加载完成');
+          return;
+        }
+        
+        currentAnimation = animation;
+        
+        // 移除所有按钮的active类
+        surveyBtn.classList.remove('active');
+        walkBtn.classList.remove('active');
+        runBtn.classList.remove('active');
+        
+        // 设置新动画
+        foxModel.setAttribute('animation-mixer', {clip: animation, loop: 'repeat'});
+        
+        // 更新状态
+        statusText.textContent = `正在: ${getAnimationName(animation)}`;
+        
+        // 添加当前按钮的active类
+        if (animation === 'Survey') surveyBtn.classList.add('active');
+        if (animation === 'Walk') walkBtn.classList.add('active');
+        if (animation === 'Run') runBtn.classList.add('active');
+        
+        console.log(`切换到动画: ${animation}`);
+      }
+      
+      // 获取动画友好名称
+      function getAnimationName(animation) {
+        switch(animation) {
+          case 'Survey': return '勘测';
+          case 'Walk': return '行走';
+          case 'Run': return '奔跑';
+          default: return animation;
+        }
+      }
+      
+      // 按钮事件绑定
       surveyBtn.addEventListener('click', () => {
-        foxModel.setAttribute('animation-mixer', {clip: 'Survey', loop: 'repeat'});
+        changeAnimation('Survey');
       });
-
-      // 行走按钮事件
+      
       walkBtn.addEventListener('click', () => {
-        foxModel.setAttribute('animation-mixer', {clip: 'Walk', loop: 'repeat'});
+        changeAnimation('Walk');
       });
-
-      // 奔跑按钮事件
+      
       runBtn.addEventListener('click', () => {
-        foxModel.setAttribute('animation-mixer', {clip: 'Run', loop: 'repeat'});
+        changeAnimation('Run');
+      });
+      
+      // 初始动画设置
+      changeAnimation('Walk');
+      
+      // 添加手势控制提示
+      scene.addEventListener('markerFound', () => {
+        statusText.textContent = '已找到标记';
+      });
+      
+      scene.addEventListener('markerLost', () => {
+        statusText.textContent = '标记丢失';
       });
     });
   </script>
