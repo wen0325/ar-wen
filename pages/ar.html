@@ -232,13 +232,17 @@
     renderer="logarithmicDepthBuffer: true;"
   >
     <!-- 宠物狗模型 -->
-    <a-entity id="dog" position="0 0.1 -0.5" scale="0.025 0.025 0.025" rotation="0 180 0">
-      <!-- 狗狗模型使用glTF格式 -->
-      <a-entity 
-        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
-        animation-mixer="clip: Idle; loop: repeat"
-      ></a-entity>
-    </a-entity>
+  <a-entity 
+  id="dog" 
+  position="0 0.1 -0.5" 
+  scale="0.05 0.05 0.05" <!-- 放大 -->
+  look-at="[camera]"      <!-- 始终面向摄像头 -->
+>
+  <a-entity 
+    gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
+    animation-mixer="clip: Idle; loop: repeat"
+  ></a-entity>
+</a-entity>
     
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
