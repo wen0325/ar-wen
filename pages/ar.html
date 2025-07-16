@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, user-scalable=no">
-  <title>AR 红色方块示例</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0">
+  <title>AR 虚拟宠物狗</title>
   
   <!-- 引入 A-Frame 和 AR.js -->
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
@@ -31,19 +31,20 @@
       padding: 15px;
       background: rgba(0, 0, 0, 0.6);
       z-index: 10;
+      position: relative;
     }
     
     h1 {
       font-size: 1.8rem;
       margin-bottom: 5px;
-      background: linear-gradient(90deg, #ff6b6b, #ffa502);
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     
     .subtitle {
       font-size: 1rem;
-      color: #a9a9a9;
+      color: #d0d0d0;
       margin-bottom: 10px;
     }
     
@@ -67,7 +68,7 @@
       width: 80px;
       height: 80px;
       border: 8px solid rgba(255, 255, 255, 0.1);
-      border-top: 8px solid #ff6b6b;
+      border-top: 8px solid #ff9a9e;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin-bottom: 30px;
@@ -105,20 +106,20 @@
     .refresh-btn {
       margin-top: 20px;
       padding: 12px 30px;
-      background: linear-gradient(90deg, #ff6b6b, #ffa502);
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4);
       border: none;
       border-radius: 50px;
-      color: white;
+      color: #333;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+      box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
     }
     
     .refresh-btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.6);
+      box-shadow: 0 6px 20px rgba(255, 154, 158, 0.6);
     }
     
     .info-panel {
@@ -138,7 +139,7 @@
     }
     
     .highlight {
-      color: #ffa502;
+      color: #fad0c4;
       font-weight: bold;
     }
     
@@ -146,17 +147,79 @@
       width: 100%;
       height: 100%;
     }
+    
+    .controls {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 6;
+    }
+    
+    .action-btn {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s;
+    }
+    
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+    
+    .action-btn i {
+      font-size: 30px;
+      color: white;
+    }
+    
+    .dog-name {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+    }
+    
+    .dog-name::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff9a9e;
+      margin-right: 8px;
+    }
   </style>
+  
+  <!-- 加载Font Awesome图标 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <header>
-    <h1>AR 红色方块示例</h1>
-    <div class="subtitle">将红色方块放置在真实环境中</div>
+    <h1>AR 虚拟宠物狗</h1>
+    <div class="subtitle">将可爱的狗狗带入你的世界</div>
   </header>
+  
+  <div class="dog-name">Buddy <i class="fas fa-paw" style="margin-left: 8px;"></i></div>
   
   <div id="loading">
     <div class="loader"></div>
-    <div class="loading-text">初始化AR环境...</div>
+    <div class="loading-text">正在准备AR环境...</div>
     <div class="instructions">
       请允许访问您的摄像头<br>
       首次加载可能需要一些时间
@@ -168,29 +231,45 @@
     arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono; matrixCodeType: 3x3;"
     renderer="logarithmicDepthBuffer: true;"
   >
-    <!-- 红色方块在手机正前方 -->
-    <a-box 
-      id="dynamicBox"
-      position="0 0.1 -0.5" 
-      material="color: red; metalness: 0.8; roughness: 0.2;"
-      scale="0.2 0.2 0.2"
-      animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear;"
-    ></a-box>
+    <!-- 宠物狗模型 -->
+    <a-entity id="dog" position="0 0.1 -0.5" scale="0.025 0.025 0.025" rotation="0 180 0">
+      <!-- 狗狗模型使用glTF格式 -->
+      <a-entity 
+        gltf-model="https://cdn.jsdelivr.net/gh/immersive-web/webxr-samples@master/assets/models/dog.glb"
+        animation-mixer="clip: Idle; loop: repeat"
+      ></a-entity>
+    </a-entity>
     
     <!-- 环境光 -->
     <a-entity light="type: ambient; color: #ccccff; intensity: 0.8"></a-entity>
     <a-entity light="type: directional; color: #ffffff; intensity: 0.8; position: -1 1 1"></a-entity>
   </a-scene>
   
+  <div class="controls">
+    <div class="action-btn" id="sitBtn" title="坐下">
+      <i class="fas fa-couch"></i>
+    </div>
+    <div class="action-btn" id="jumpBtn" title="跳跃">
+      <i class="fas fa-arrow-up"></i>
+    </div>
+    <div class="action-btn" id="barkBtn" title="吠叫">
+      <i class="fas fa-volume-up"></i>
+    </div>
+  </div>
+  
   <div class="info-panel">
-    <p>移动设备扫描周围平面，寻找放置方块的位置</p>
-    <p>使用<span class="highlight">手势</span>可以旋转和缩放方块</p>
+    <p>移动设备扫描周围平面，寻找放置狗狗的位置</p>
+    <p>使用<span class="highlight">手势</span>可以旋转和缩放狗狗</p>
   </div>
   
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const scene = document.querySelector('a-scene');
       const loading = document.getElementById('loading');
+      const dog = document.getElementById('dog');
+      const sitBtn = document.getElementById('sitBtn');
+      const jumpBtn = document.getElementById('jumpBtn');
+      const barkBtn = document.getElementById('barkBtn');
       
       // 场景加载成功
       scene.addEventListener('loaded', () => {
@@ -216,9 +295,49 @@
         `;
       });
       
-      // 处理移动设备上的返回按钮
-      window.addEventListener('popstate', () => {
-        window.location.reload();
+      // 动作按钮事件
+      sitBtn.addEventListener('click', () => {
+        dog.setAttribute('animation', {
+          property: 'rotation',
+          to: {x: 0, y: 180, z: 0},
+          dur: 300,
+          easing: 'easeInOutQuad'
+        });
+        
+        setTimeout(() => {
+          dog.setAttribute('animation-mixer', 'clip: Sitting; loop: once');
+          setTimeout(() => {
+            dog.setAttribute('animation-mixer', 'clip: Idle; loop: repeat');
+          }, 3000);
+        }, 300);
+      });
+      
+      jumpBtn.addEventListener('click', () => {
+        dog.setAttribute('animation', {
+          property: 'position',
+          from: {x: 0, y: 0.1, z: -0.5},
+          to: {x: 0, y: 0.3, z: -0.5},
+          dur: 300,
+          easing: 'easeOutQuad',
+          direction: 'alternate'
+        });
+        
+        dog.setAttribute('animation-mixer', 'clip: Jumping; loop: once');
+        setTimeout(() => {
+          dog.setAttribute('animation-mixer', 'clip: Idle; loop: repeat');
+        }, 1000);
+      });
+      
+      barkBtn.addEventListener('click', () => {
+        dog.setAttribute('animation-mixer', 'clip: Barking; loop: once');
+        setTimeout(() => {
+          dog.setAttribute('animation-mixer', 'clip: Idle; loop: repeat');
+        }, 1500);
+        
+        // 播放狗叫声
+        const barkSound = new Audio('https://cdn.freesound.org/previews/186/186942_2364211-lq.mp3');
+        barkSound.volume = 0.5;
+        barkSound.play();
       });
     });
   </script>
