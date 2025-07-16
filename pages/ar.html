@@ -214,6 +214,39 @@
       font-size: 0.9rem;
       z-index: 10;
     }
+
+    /* 法律信息样式 */
+    .legal-panel {
+      position: absolute;
+      left: 10px;
+      bottom: 110px;
+      background: rgba(0,0,0,0.7);
+      padding: 10px 18px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #eee;
+      z-index: 20;
+      max-width: 300px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      line-height: 1.4;
+    }
+    .legal-panel a {
+      color: #fad0c4;
+      text-decoration: underline;
+    }
+    .legal-panel img {
+      height: 18px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    .legal-title {
+      font-weight: bold;
+      margin-bottom: 4px;
+      color: #fad0c4;
+    }
+    .legal-item {
+      margin-bottom: 6px;
+    }
   </style>
   <!-- 加载Font Awesome图标 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -246,7 +279,7 @@
     <a-entity id="fox" position="0 -0.5 -1" scale="0.5 0.5 0.5" rotation="0 180 0">
       <a-entity 
         id="foxModel"
-        gltf-model="./Fox.glb"
+        gltf-model=".Fox.glb"
         animation-mixer="clip: Walk; loop: repeat"
       ></a-entity>
     </a-entity>
@@ -272,6 +305,29 @@
   <div class="info-panel">
     <p>移动设备扫描周围平面，寻找放置狐狸的位置</p>
     <p>使用<span class="highlight">手势</span>可以旋转和缩放狐狸</p>
+  </div>
+
+  <!-- 法律信息面板 -->
+  <div class="legal-panel">
+    <div class="legal-title">素材授权与致谢：</div>
+    <div class="legal-item">
+      <img src="https://licensebuttons.net/p/zero/1.0/88x31.png" alt="CC0" />
+      <strong>模型：</strong> <a href="https://creativecommons.org/publicdomain/zero/1.0/legalcode" target="_blank">CC0 1.0 Universal</a><br/>
+      作者：PixelMannen<br/>
+      年份：2014
+    </div>
+    <div class="legal-item">
+      <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC-BY 4.0" />
+      <strong>绑定与动画：</strong> <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">CC BY 4.0</a><br/>
+      作者：tomkranis<br/>
+      年份：2014
+    </div>
+    <div class="legal-item">
+      <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC-BY 4.0" />
+      <strong>转换为glTF：</strong> <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">CC BY 4.0</a><br/>
+      作者：@AsoboStudio &amp; @scurest<br/>
+      年份：2017
+    </div>
   </div>
   
   <script>
