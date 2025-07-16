@@ -1,46 +1,76 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no">
-    
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-    
-    <style>
-        body { margin: 0; overflow: hidden; }
-        #loading {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #000;
-            color: white;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>AR 红色方块示例</title>
+  
+  <!-- 引入 A-Frame 和 AR.js -->
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+  </style>
 </head>
-
 <body>
-    <div id="loading">等待摄像头权限...</div>
+  <div id="loading">等待摄像头权限...</div>
+  
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: true;">
+    <!-- 摄像头实体 -->
+    <a-entity id="camera" camera look-at="[marker-hiro]"></a-entity>
     
-    <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: true;'>
-        <a-marker preset="hiro">
-             <a-box position="0 0.5 0" color="red" look-at="#camera"></a-box>
-
-        </a-marker>
-        <a-entity camera></a-entity>
-    </a-scene>
-
-    <script>
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(() => {
-                document.getElementById('loading').style.display = 'none';
-            })
-            .catch(err => {
-                document.getElementById('loading').innerHTML = 
-                    `摄像头错误: ${err.name}<br>请允许摄像头访问`;
-            });
-    </script>
+    <!-- 红色方块在手机正前方 -->
+    <a-box 
+      id="dynamicBox"
+      position="0 0 -1"  <!-- 正前方1米 -->
+      color="red" 
+      scale="0.2 0.2 0.2"
+      look-at="#camera"  <!-- 始终朝向摄像头 -->
+    ></a-box>
+    
+    <!-- Hiro 标记 -->
+    <a-marker preset="hiro">
+      <a-box position="0 0.3 0" color="blue" scale="0.2 0.2 0.2"></a-box>
+    </a-marker>
+    
+    <!-- 场景结束 -->
+    <a-entity light="type: ambient; intensity: 0.5"></a-entity>
+    <a-entity light="type: directional; intensity: 0.8; position: 0 1 1"></a-entity>
+  </a-scene>
+  
+  <script>
+    // 等待场景加载完成
+    document.addEventListener('DOMContentLoaded', () => {
+      const scene = document.querySelector('a-scene');
+      
+      // 检查场景是否成功加载
+      scene.addEventListener('loaded', () => {
+        document.getElementById('loading').style.display = 'none';
+      });
+      
+      // 处理摄像头权限错误
+      scene.addEventListener('error', (err) => {
+        document.getElementById('loading').innerHTML = 
+          '摄像头错误: ' + err + '<br>请允许摄像头访问并刷新页面。';
+      });
+    });
+  </script>
 </body>
 </html>
