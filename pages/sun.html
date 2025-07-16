@@ -1,60 +1,87 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>SunglassesKhronos AR Demo</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@4.1.3/aframe/build/aframe-ar.js"></script>
-    <style>
-      body { margin: 0; overflow: hidden; }
-      #meta { position: fixed; top: 10px; left: 10px; background:rgba(255,255,255,0.9); padding:12px; border-radius:8px; z-index:10; max-width:360px; }
-      #meta img { max-width: 100%; }
-      #meta small { color: #888; }
-    </style>
-  </head>
-  <body>
-    <div id="meta">
-      <h2>SunglassesKhronos</h2>
-      <img src="screenshot/screenshot.jpg" alt="SunglassesKhronos screenshot" />
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SunglassesKhronos AR Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="description" content="Sunglasses with Khronos logos and iridescent lenses - AR Viewer">
+  <link rel="icon" href="https://licensebuttons.net/l/by/3.0/88x31.png">
+  <style>
+    body { margin: 0; padding: 0; font-family: system-ui, sans-serif; background: #222; color: #fff; }
+    #meta {
+      position: fixed;
+      top: 0; left: 0; width: 100vw;
+      background: rgba(30,30,30,0.92);
+      z-index: 10;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #meta img { border-radius: 6px; width: 56px; height: 56px; object-fit: cover; }
+    #meta .info { flex: 1; min-width: 0; }
+    #meta h1 { font-size: 1.1em; margin: 0 0 2px 0; }
+    #meta p { font-size: 0.95em; margin: 0 0 2px 0; color: #bbb;}
+    #meta .tags { font-size: 0.85em; color: #7fffd4; margin: 2px 0 0 0;}
+    #meta .legal { font-size: 0.7em; color: #aaa; margin-top: 2px;}
+    #closeMeta {
+      background: #444; color: #fff; border: none; border-radius: 50%;
+      width: 32px; height: 32px; font-size: 1.4em; cursor: pointer; margin-left: 6px;
+    }
+    @media (max-width: 600px) {
+      #meta { flex-direction: column; align-items: flex-start; }
+      #meta img { width: 44px; height: 44px; }
+    }
+  </style>
+  <!-- A-Frame and AR.js -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@4.1.3/aframe/build/aframe-ar.js"></script>
+</head>
+<body>
+  <div id="meta">
+    <img src="screenshot/screenshot.jpg" alt="SunglassesKhronos">
+    <div class="info">
+      <h1>SunglassesKhronos</h1>
       <p>Sunglasses with Khronos logos and iridescent lenses</p>
-      <ul>
-        <li><b>Artist:</b> Eric Chadwick</li>
-        <li><b>Year:</b> 2024</li>
-        <li><b>Owner:</b> Darmstadt Graphics Group GmbH</li>
-        <li>
-          <b>License:</b>
-          <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank">
-            CC-BY 4.0
-            <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC-BY 4.0" style="vertical-align:middle; height:20px;">
-          </a>
-        </li>
-        <li><b>What:</b> Model and textures and all images in the README.md</li>
-        <li><b>SPDX:</b> CC-BY-4.0</li>
-        <li><b>Tags:</b> showcase, extension</li>
-        <li><small>Khronos logo and 3D Commerce logo are trademarks of Khronos Group.</small></li>
-      </ul>
+      <div class="tags">#showcase #extension</div>
+      <div class="legal">
+        <img src="https://licensebuttons.net/l/by/3.0/88x31.png" alt="CC BY 4.0" style="height:18px;vertical-align:middle;">
+        CC-BY 4.0 - Eric Chadwick 2024<br>
+        <span>Khronos/3D Commerce logos &copy; Khronos Group</span>
+      </div>
     </div>
-    <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-      renderer="logarithmicDepthBuffer: true;"
-      vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true"
-    >
-      <a-assets>
-        <a-asset-item id="glassesModel" src="./SunglassesKhronos.glb"></a-asset-item>
-      </a-assets>
+    <button id="closeMeta" title="Hide info">&times;</button>
+  </div>
 
-      <!-- Marker pattern (use Hiro marker or your own) -->
-      <a-marker preset="hiro">
-        <a-entity
-          gltf-model="#glassesModel"
-          scale="0.5 0.5 0.5"
-          rotation="0 0 0"
-          position="0 0 0"
-        ></a-entity>
-      </a-marker>
-      <a-entity camera></a-entity>
-    </a-scene>
-  </body>
+  <a-scene
+    vr-mode-ui="enabled: false"
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false;"
+    renderer="antialias: true; logarithmicDepthBuffer: true;"
+    device-orientation-permission-ui="enabled: true"
+    style="width: 100vw; height: 100vh; position: absolute; top: 0; left: 0;"
+  >
+    <a-assets>
+      <a-asset-item id="glassesModel" src="./SunglassesKhronos.glb"></a-asset-item>
+    </a-assets>
+    <!-- Use "hiro" marker or replace with your custom marker -->
+    <a-marker preset="hiro">
+      <a-entity
+        gltf-model="#glassesModel"
+        scale="0.5 0.5 0.5"
+        position="0 0 0"
+        rotation="0 0 0"
+      ></a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+  
+  <script>
+    // Hide meta info on click for better AR experience
+    document.getElementById('closeMeta').onclick = function() {
+      document.getElementById('meta').style.display = 'none';
+    };
+  </script>
+</body>
 </html>
